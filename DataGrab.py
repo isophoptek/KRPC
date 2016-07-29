@@ -72,8 +72,8 @@ while poll < num_of_polls:
             "{vt},"
             "{stagedv},"
             "{totaldv},"
-            "/n").format(ut="ut",
-                         met=meanaltitude,
+            "/n").format(ut=conn.space_center.ut,
+                         met=vessel.met,
                          body=currentbody,
                          apo=apoapsis,
                          peri=periapsis,
@@ -83,7 +83,7 @@ while poll < num_of_polls:
                          vt=terminalvelocity,
                          stagedv="",
                          totaldv="",)
-#TODO get deltaV data
+# TODO get deltaV data
 
 # TODO write to file
     exportFile.write(line)
