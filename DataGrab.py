@@ -55,12 +55,13 @@ with open(outFile) as exportFile:
                      "MeanAltitude",
                      "G Force",
                      "Terminal Velocity",
+                     "TWR",
                      "Stage dV",
                      "Total dV",
                      "/n")
 
 while poll < num_of_polls:
-    # TODO get data values
+    # TODO calculate current stage and total deltaV
     line = ("{ut},"
             "{met},"
             "{body},"
@@ -70,6 +71,7 @@ while poll < num_of_polls:
             "{mean_alt},"
             "{gforce},"
             "{vt},"
+            "{twr},"
             "{stagedv},"
             "{totaldv},"
             "/n").format(ut=conn.space_center.ut,
@@ -81,6 +83,7 @@ while poll < num_of_polls:
                          mean_alt=meanaltitude,
                          gforce=currentgforce,
                          vt=terminalvelocity,
+                         twr=vessel.available_thrust,
                          stagedv="",
                          totaldv="",)
 # TODO get deltaV data
