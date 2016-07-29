@@ -12,6 +12,11 @@ parser.add_argument("outfile", help="Output filename")
 parser.add_argument("-n", "--polls", help="Number of polls", type=int, default=1)
 args = parser.parse_args()
 
+# argument interpretation
+
+num_of_polls = args.polls
+outFile = args.outfile
+
 # connect to server
 
 conn = krpc.connect(name='DataGrab')
@@ -31,7 +36,7 @@ meanaltitude = conn.add_stream(vessel.flight.mean_altitude)
 terminalvelocity = conn.add_stream(vessel.flight.terminal_velocity)
 
 # poll loop
-num_of_polls = args.polls
+
 poll = 0
 
 while poll < num_of_polls:
