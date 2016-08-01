@@ -2,9 +2,7 @@
 
 # (C) Snieder Marton
 
-import sys
 import krpc
-import time
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -40,7 +38,7 @@ terminalvelocity = conn.add_stream(getattr, flight(), 'terminal_velocity')
 if num_of_polls == 1:
     fileName = "SinglePoll_" + str(vessel.name) + "_" + str(vessel.situation) + "_" + str(missionelapsedtime) + ".csv"
 else:
-    fileName = "PollLog_" + str(vessel.name) + str(missionelapsedtime) + ".csv"
+    fileName = "PollLog_" + str(vessel.name) + "_" + str(missionelapsedtime) + ".csv"
 
 outFile += fileName
 
@@ -77,7 +75,7 @@ while poll < num_of_polls:
             "{stagedv},"
             "{totaldv},"
             "/n").format(ut=conn.space_center.ut,
-                         met=vessel.met,
+                         met=missionelapsedtime,
                          body=currentbody,
                          apo=apoapsis,
                          peri=periapsis,
