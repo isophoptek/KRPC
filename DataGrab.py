@@ -6,7 +6,7 @@ import krpc
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("path", help="Path fox export")
+parser.add_argument("-p", "--path", help="Path fox export")
 parser.add_argument("-n", "--polls", help="Number of polls", type=int, default=1)
 args = parser.parse_args()
 
