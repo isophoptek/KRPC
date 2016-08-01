@@ -93,4 +93,15 @@ while poll < num_of_polls:
 
     poll += 1
 
-print("Cycle done")
+print("Cycle(s) done")
+
+# remove streams
+
+conn.remove.stream(apoapsis)
+conn.remove.stream(periapsis)
+conn.remove.stream(currentbody)
+conn.remove.stream(inclination)
+conn.remove.stream(missionelapsedtime)
+conn.remove.stream(currentgforce)
+conn.remove.stream(meanaltitude)
+conn.remove.stream(terminalvelocity)
