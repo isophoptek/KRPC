@@ -95,6 +95,8 @@ while poll < num_of_polls:
 
 print("Cycle(s) done")
 
+exportFile.close()
+
 # remove streams
 
 conn.remove.stream(apoapsis)
