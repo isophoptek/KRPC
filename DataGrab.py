@@ -24,14 +24,16 @@ conn = krpc.connect(name='DataGrab')
 # create data streams
 
 vessel = conn.space_center.active_vessel
-apoapsis = conn.add_stream(vessel.orbit.apoapsis_altitude)
-periapsis = conn.add_stream(vessel.orbit.periapsis_altitude)
-currentbody = conn.add_stream(vessel.orbit.body)
-inclination = conn.add_stream(vessel.orbit.inclination)
-missionelapsedtime = conn.add_stream(vessel.met)
-currentgforce = conn.add_stream(vessel.flight.g_force)
-meanaltitude = conn.add_stream(vessel.flight.mean_altitude)
-terminalvelocity = conn.add_stream(vessel.flight.terminal_velocity)
+orbit = vessel.orbit
+flight = vessel.flight
+apoapsis = conn.add_stream(getattr, orbit.apoapsis_altitude)
+periapsis = conn.add_stream(getattr, orbit.periapsis_altitude)
+currentbody = conn.add_stream(getattr, vessel, orbit.body)
+inclination = conn.add_stream(getattr, vessel, orbit.inclination)
+missionelapsedtime = conn.add_stream(getattr, vessel, met)
+currentgforce = conn.add_stream(getattr, flight, g_force)
+meanaltitude = conn.add_stream(getattr, flight, mean_altitude)
+terminalvelocity = conn.add_stream(getattr, flight, terminal_velocity)
 
 # export file definition
 
