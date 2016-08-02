@@ -16,22 +16,28 @@ num_of_polls = args.polls
 outFile = args.path
 
 # connect to server
+try:
+    print('Connecting to server...')
+    conn = krpc.connect(name='DataGrab')
 
-conn = krpc.connect(name='DataGrab')
+except krpc.error.NetworkError as e:
+    print('Connection to server could not be established.')
+    print('Check if server is running and accepts connections, accept connection manually if necessary.')
+    exit(1)
 
 # create data streams
 
 vessel = conn.space_center.active_vessel
 orbit = vessel.orbit
 flight = vessel.flight
-apoapsis = conn.add_stream(getattr, orbit(), 'apoapsis_altitude')
-periapsis = conn.add_stream(getattr, orbit(), 'periapsis_altitude')
-currentbody = conn.add_stream(getattr, orbit(), 'body')
-inclination = conn.add_stream(getattr, orbit(), 'inclination')
-missionelapsedtime = conn.add_stream(getattr, vessel(), 'met')
-currentgforce = conn.add_stream(getattr, flight(), 'g_force')
-meanaltitude = conn.add_stream(getattr, flight(), 'mean_altitude')
-terminalvelocity = conn.add_stream(getattr, flight(), 'terminal_velocity')
+apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
+periapsis = conn.add_stream(getattr, orbit, 'periapsis_altitude')
+currentbody = conn.add_stream(getattr, orbit, 'body')
+inclination = conn.add_stream(getattr, orbit, 'inclination')
+missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
+currentgforce = conn.add_stream(getattr, flight, 'g_force')
+meanaltitude = conn.add_stream(getattr, flight, 'mean_altitude')
+terminalvelocity = conn.add_stream(getattr, flight, 'terminal_velocity')
 
 # export file definition
 
