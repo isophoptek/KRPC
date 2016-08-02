@@ -2,6 +2,7 @@
 
 # (C) Snieder Marton
 
+import time
 import krpc
 import argparse
 
@@ -98,7 +99,8 @@ while poll < num_of_polls:
     exportFile.write(line)
 
     poll += 1
-
+    time.sleep(1)
+# TODO poll interval optional parameter
 print("Cycle(s) done")
 
 exportFile.close()
