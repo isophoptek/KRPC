@@ -2,6 +2,8 @@
 
 # (C) Snieder Marton
 
+# original idea by Alexander Korsunsky
+
 import time
 import krpc
 import argparse
