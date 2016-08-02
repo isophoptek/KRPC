@@ -4,8 +4,6 @@
 
 # original idea by Alexander Korsunsky
 
-#alpha
-
 import time
 import krpc
 import argparse
