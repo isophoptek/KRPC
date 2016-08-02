@@ -15,7 +15,8 @@ args = parser.parse_args()
 
 # argument interpretation
 
-num_of_polls = args.polls
+# num_of_polls = args.polls
+num_of_polls = 1
 outFile = args.path
 
 # connect to server
@@ -31,77 +32,88 @@ except krpc.error.NetworkError as e:
 # create data streams
 
 vessel = conn.space_center.active_vessel
+ref_frame = vessel.surface_reference_frame
 orbit = vessel.orbit
 flight = vessel.flight
 apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
+print('apoapsis: ' + str(apoapsis()))
 periapsis = conn.add_stream(getattr, orbit, 'periapsis_altitude')
+print('periapsis: ' + str(periapsis()))
 currentbody = conn.add_stream(getattr, orbit, 'body')
+print('current body: ' + str(currentbody()))
 inclination = conn.add_stream(getattr, orbit, 'inclination')
+print('inclination: ' + str(inclination()))
 missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
-currentgforce = conn.add_stream(getattr, flight, 'g_force')
-meanaltitude = conn.add_stream(getattr, flight, 'mean_altitude')
-terminalvelocity = conn.add_stream(getattr, flight, 'terminal_velocity')
+print('mission elapsed time: ' + str(missionelapsedtime()))
+currentgforce = conn.add_stream(getattr, flight(ref_frame), 'g_force')
+print('current g force: ' + str(currentgforce()))
+meanaltitude = conn.add_stream(getattr, flight(ref_frame), 'mean_altitude')
+print('mean altitude: ' + str(meanaltitude()))
+terminalvelocity = conn.add_stream(getattr, flight(ref_frame), 'terminal_velocity')
+print('terminal velocity: ' + str(terminalvelocity()))
 
 # export file definition
 
 if num_of_polls == 1:
-    fileName = "SinglePoll_" + str(vessel.name) + "_" + str(vessel.situation) + "_" + str(missionelapsedtime) + ".csv"
+    fileName = "SinglePoll_" + str(vessel.name) + "_" + str(vessel.situation) + "_" + str(missionelapsedtime()) + ".csv"
 else:
-    fileName = "PollLog_" + str(vessel.name) + "_" + str(missionelapsedtime) + ".csv"
+    fileName = "PollLog_" + str(vessel.name) + "_" + str(missionelapsedtime()) + ".csv"
 
-outFile += fileName
+# outFile += fileName
+outFile = "d:\pycharm\datagrab.csv"
 
 # poll loop
 
 poll = 0
-with open(outFile) as exportFile:
-    exportFile.write("UT",
-                     "MET",
-                     "Current Body",
-                     "Apoapsis",
-                     "Periapsis",
-                     "Inclination",
-                     "MeanAltitude",
-                     "G Force",
-                     "Terminal Velocity",
-                     "TWR",
-                     "Stage dV",
-                     "Total dV",
-                     "/n")
+with open(outFile, mode='a') as exportFile:
+    exportFile.write('UT /n')
+    #                  "MET",
+    #                  "Current Body",
+    #                  "Apoapsis",
+    #                  "Periapsis",
+    #                  "Inclination",
+    #                  "MeanAltitude",
+    #                  "G Force",
+    #                  "Terminal Velocity",
+    #                  "TWR",
+    #                  "Stage dV",
+    #                  "Total dV",
+    #                  "/n")
 
-while poll < num_of_polls:
-    # TODO calculate current stage and total deltaV
-    line = ("{ut},"
-            "{met},"
-            "{body},"
-            "{apo},"
-            "{peri},"
-            "{inc},"
-            "{mean_alt},"
-            "{gforce},"
-            "{vt},"
-            "{twr},"
-            "{stagedv},"
-            "{totaldv},"
-            "/n").format(ut=conn.space_center.ut,
-                         met=missionelapsedtime,
-                         body=currentbody,
-                         apo=apoapsis,
-                         peri=periapsis,
-                         inc=inclination,
-                         mean_alt=meanaltitude,
-                         gforce=currentgforce,
-                         vt=terminalvelocity,
-                         twr=vessel.available_thrust,
-                         stagedv="",
-                         totaldv="",)
-# TODO get deltaV data
+    while poll < num_of_polls:
+        line = ("{ut},"
+                "{met},"
+                "{body},"
+                "{apo},"
+                "{peri},"
+                "{inc},"
+                "{mean_alt},"
+                "{gforce},"
+                "{vt},"
+                "{twr},"
+                "{stagedv},"
+                "{totaldv},"
+                "/n").format(ut=conn.space_center.ut,
+                             met=missionelapsedtime(),
+                             body=currentbody,
+                             apo=apoapsis,
+                             peri=periapsis,
+                             inc=inclination,
+                             mean_alt=meanaltitude,
+                             gforce=currentgforce,
+                             vt=terminalvelocity,
+                             twr=vessel.available_thrust,
+                             stagedv="",
+                             totaldv="", )
+        poll += 1
+        time.sleep(1)
+        # TODO get deltaV data
 
-# TODO write to file
-    exportFile.write(line)
+        # TODO write to file
+        exportFile.write(line)
 
-    poll += 1
-    time.sleep(1)
+# poll += 1
+# time.sleep(1)
 # TODO poll interval optional parameter
 print("Cycle(s) done")
 
@@ -109,11 +121,11 @@ exportFile.close()
 
 # remove streams
 
-conn.remove.stream(apoapsis)
-conn.remove.stream(periapsis)
-conn.remove.stream(currentbody)
-conn.remove.stream(inclination)
-conn.remove.stream(missionelapsedtime)
-conn.remove.stream(currentgforce)
-conn.remove.stream(meanaltitude)
-conn.remove.stream(terminalvelocity)
+conn.remove_stream(apoapsis)
+conn.remove_stream(periapsis)
+conn.remove_stream(currentbody)
+conn.remove_stream(inclination)
+conn.remove_stream(missionelapsedtime)
+conn.remove_stream(currentgforce)
+conn.remove_stream(meanaltitude)
+conn.remove_stream(terminalvelocity)
