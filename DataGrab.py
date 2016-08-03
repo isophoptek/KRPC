@@ -15,8 +15,8 @@ args = parser.parse_args()
 
 # argument interpretation
 
-# num_of_polls = args.polls
-num_of_polls = 1
+num_of_polls = args.polls
+# num_of_polls = 1
 outFile = args.path
 
 # connect to server
@@ -39,7 +39,7 @@ apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
 print('apoapsis: ' + str(apoapsis()))
 periapsis = conn.add_stream(getattr, orbit, 'periapsis_altitude')
 print('periapsis: ' + str(periapsis()))
-currentbody = conn.add_stream(getattr, orbit, 'body')
+currentbody = conn.add_stream(getattr, orbit.body, 'name')
 print('current body: ' + str(currentbody()))
 inclination = conn.add_stream(getattr, orbit, 'inclination')
 print('inclination: ' + str(inclination()))
@@ -59,26 +59,26 @@ if num_of_polls == 1:
 else:
     fileName = "PollLog_" + str(vessel.name) + "_" + str(missionelapsedtime()) + ".csv"
 
-# outFile += fileName
-outFile = "d:\pycharm\datagrab.csv"
+outFile = str(outFile) + str(fileName)
+# outFile = "d:\pycharm\datagrab.csv"
 
 # poll loop
 
 poll = 0
-with open(outFile, mode='a') as exportFile:
-    exportFile.write('UT /n')
-    #                  "MET",
-    #                  "Current Body",
-    #                  "Apoapsis",
-    #                  "Periapsis",
-    #                  "Inclination",
-    #                  "MeanAltitude",
-    #                  "G Force",
-    #                  "Terminal Velocity",
-    #                  "TWR",
-    #                  "Stage dV",
-    #                  "Total dV",
-    #                  "/n")
+with open(outFile, mode='a+') as exportFile:
+    exportFile.write('UT,')
+    exportFile.write('MET,')
+    exportFile.write('Current Body,')
+    exportFile.write('Apoapsis,')
+    exportFile.write('Periapsis,')
+    exportFile.write('Inclination,')
+    exportFile.write('MeanAltitude,')
+    exportFile.write('G Force,')
+    exportFile.write('Terminal Velocity,')
+    exportFile.write('TWR,')
+    exportFile.write('Stage dV,')
+    exportFile.write('Total dV,')
+    exportFile.write("\n")
 
     while poll < num_of_polls:
         line = ("{ut},"
@@ -93,15 +93,15 @@ with open(outFile, mode='a') as exportFile:
                 "{twr},"
                 "{stagedv},"
                 "{totaldv},"
-                "/n").format(ut=conn.space_center.ut,
-                             met=missionelapsedtime(),
-                             body=currentbody,
-                             apo=apoapsis,
-                             peri=periapsis,
-                             inc=inclination,
-                             mean_alt=meanaltitude,
-                             gforce=currentgforce,
-                             vt=terminalvelocity,
+                "\n").format(ut=int(conn.space_center.ut),
+                             met=int(missionelapsedtime()),
+                             body=currentbody(),
+                             apo=int(apoapsis()),
+                             peri=int(periapsis()),
+                             inc=int(inclination()),
+                             mean_alt=int(meanaltitude()),
+                             gforce=int(currentgforce()),
+                             vt=terminalvelocity(),
                              twr=vessel.available_thrust,
                              stagedv="",
                              totaldv="", )
@@ -121,11 +121,11 @@ exportFile.close()
 
 # remove streams
 
-conn.remove_stream(apoapsis)
-conn.remove_stream(periapsis)
-conn.remove_stream(currentbody)
-conn.remove_stream(inclination)
-conn.remove_stream(missionelapsedtime)
-conn.remove_stream(currentgforce)
-conn.remove_stream(meanaltitude)
-conn.remove_stream(terminalvelocity)
+apoapsis.remove()
+periapsis.remove()
+currentbody.remove()
+inclination.remove()
+missionelapsedtime.remove()
+currentgforce.remove()
+meanaltitude.remove()
+terminalvelocity.remove()
