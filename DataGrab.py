@@ -7,19 +7,31 @@
 import time
 import krpc
 import argparse
+import datetime
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--path", help="Path fox export")
 parser.add_argument("-n", "--polls", help="Number of polls", type=int, default=1)
+parser.add_argument("-i", "--interval", help="Interval between polls", type=int, default=1)
+parser.add_argument("-c", "--continuous", help="Continuous", action='store_true')
 args = parser.parse_args()
 
 # argument interpretation
 
 num_of_polls = args.polls
-# num_of_polls = 1
+interval = args.interval
+continuous = args.continuous
 outFile = args.path
 
+
+def sectionheader(sectiontitle):
+    print('----------------------------------------')
+    print(sectiontitle)
+    print('----------------------------------------')
+
 # connect to server
+sectionheader('Seeking server')
+
 try:
     print('Connecting to server...')
     conn = krpc.connect(name='DataGrab')
@@ -30,7 +42,7 @@ except krpc.error.NetworkError as e:
     exit(1)
 
 # create data streams
-
+sectionheader('setting up streams')
 vessel = conn.space_center.active_vessel
 ref_frame = vessel.surface_reference_frame
 orbit = vessel.orbit
@@ -53,6 +65,8 @@ terminalvelocity = conn.add_stream(getattr, flight(ref_frame), 'terminal_velocit
 print('terminal velocity: ' + str(terminalvelocity()))
 
 # export file definition
+
+sectionheader('Writing file')
 
 if num_of_polls == 1:
     fileName = "SinglePoll_" + str(vessel.name) + "_" + str(vessel.situation) + "_" + str(missionelapsedtime()) + ".csv"
@@ -93,8 +107,8 @@ with open(outFile, mode='a+') as exportFile:
                 "{twr},"
                 "{stagedv},"
                 "{totaldv},"
-                "\n").format(ut=int(conn.space_center.ut),
-                             met=int(missionelapsedtime()),
+                "\n").format(ut=str(datetime.timedelta(seconds=int(conn.space_center.ut))),
+                             met=str(datetime.timedelta(seconds=int(missionelapsedtime()))),
                              body=currentbody(),
                              apo=int(apoapsis()),
                              peri=int(periapsis()),
@@ -106,7 +120,13 @@ with open(outFile, mode='a+') as exportFile:
                              stagedv="",
                              totaldv="", )
         poll += 1
-        time.sleep(1)
+        print('Current poll value: ' + str(poll))
+        print('Poll limit: ' + str(num_of_polls))
+        if continuous:
+            poll -= 1
+            print('Continuous flag active')
+        print('Sleep with interval: ' + str(interval))
+        time.sleep(interval)
         # TODO get deltaV data
 
         # TODO write to file
@@ -120,6 +140,8 @@ print("Cycle(s) done")
 exportFile.close()
 
 # remove streams
+
+sectionheader('Closing streams')
 
 apoapsis.remove()
 periapsis.remove()
