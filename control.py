@@ -10,6 +10,7 @@ def prog():
     ap.engage()
     ap.target_direction = (0, 1, 0)
     ap.wait()
+    vessel.auto_pilot.sas = True
     conn_control.close()
 
 
@@ -22,6 +23,7 @@ def retrog():
     ap.engage()
     ap.target_direction = (0, -1, 0)
     ap.wait()
+    vessel.auto_pilot.sas = True
     conn_control.close()
 
 
@@ -34,6 +36,7 @@ def norm():
     ap.engage()
     ap.target_direction = (0, 0, 1)
     ap.wait()
+    vessel.auto_pilot.sas = True
     conn_control.close()
 
 
@@ -46,6 +49,7 @@ def antinorm():
     ap.engage()
     ap.target_direction = (0, 0, -1)
     ap.wait()
+    vessel.auto_pilot.sas = True
     conn_control.close()
 
 
@@ -58,6 +62,7 @@ def radial():
     ap.engage()
     ap.target_direction = (1, 0, 0)
     ap.wait()
+    vessel.auto_pilot.sas = True
     conn_control.close()
 
 
@@ -70,6 +75,7 @@ def antiradial():
     ap.engage()
     ap.target_direction = (-1, 0, 0)
     ap.wait()
+    vessel.auto_pilot.sas = True
     conn_control.close()
 
 
@@ -82,4 +88,5 @@ def turnvector(r, g, n):
     ap.engage()
     ap.target_direction = (r, g, n)
     ap.wait()
+    vessel.auto_pilot.sas = True
     conn_control.close()
