@@ -71,3 +71,15 @@ def antiradial():
     ap.target_direction = (-1, 0, 0)
     ap.wait()
     conn_control.close()
+
+
+def turnvector(r, g, n):
+    import krpc
+    conn_control = krpc.connect(name='Control:TurnVector')
+    vessel = conn_control.space_center.active_vessel
+    ap = vessel.auto_pilot
+    ap.reference_frame = vessel.orbital_reference_frame
+    ap.engage()
+    ap.target_direction = (r, g, n)
+    ap.wait()
+    conn_control.close()
