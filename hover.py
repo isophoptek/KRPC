@@ -12,7 +12,7 @@ control = vessel.control
 flight = vessel.flight(vessel.orbit.body.reference_frame)
 
 # target = 15
-target = args.target # target altitude above the surface, in meters
+target = args.target  # target altitude above the surface, in meters
 g = 9.81
 while True:
 
