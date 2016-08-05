@@ -48,21 +48,21 @@ ref_frame = vessel.surface_reference_frame
 orbit = vessel.orbit
 flight = vessel.flight
 apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
-print('apoapsis: ' + str(apoapsis()))
+print('apoapsis: (%.2f)' % apoapsis())
 periapsis = conn.add_stream(getattr, orbit, 'periapsis_altitude')
-print('periapsis: ' + str(periapsis()))
+print('periapsis: (%.2f)' % periapsis())
 currentbody = conn.add_stream(getattr, orbit.body, 'name')
 print('current body: ' + str(currentbody()))
 inclination = conn.add_stream(getattr, orbit, 'inclination')
-print('inclination: ' + str(inclination()))
+print('inclination: (%.3f)' % inclination())
 missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
-print('mission elapsed time: ' + str(missionelapsedtime()))
+print('mission elapsed time: ' + datetime.timedelta(seconds=int(missionelapsedtime())))
 currentgforce = conn.add_stream(getattr, flight(ref_frame), 'g_force')
-print('current g force: ' + str(currentgforce()))
+print('current g force: (%.2f)' % currentgforce())
 meanaltitude = conn.add_stream(getattr, flight(ref_frame), 'mean_altitude')
-print('mean altitude: ' + str(meanaltitude()))
+print('mean altitude: (%.2f)' % meanaltitude())
 terminalvelocity = conn.add_stream(getattr, flight(ref_frame), 'terminal_velocity')
-print('terminal velocity: ' + str(terminalvelocity()))
+print('terminal velocity: (%.2f)' % terminalvelocity())
 
 # export file definition
 
