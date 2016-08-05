@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--target', help="Target Altitude in maters", type=int, default=15)
 args = parser.parse_args()
 
-conn = krpc.connect()
+conn = krpc.connect(name='Hover Control')
 vessel = conn.space_center.active_vessel
 control = vessel.control
 flight = vessel.flight(vessel.orbit.body.reference_frame)
