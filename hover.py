@@ -1,22 +1,34 @@
 import krpc
 import time
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--target', help="Target Altitude in maters", type=int, default=15)
 args = parser.parse_args()
 
-conn = krpc.connect(name='Hover Control')
+try:
+    print('Connecxting to server as: Hover Control')
+    conn = krpc.connect(name='Hover Control')
+except krpc.error.NetworkError:
+    print('Connection to server could not be established.')
+    print('Check if server is running and accepts connections, accept connection manually if necessary.')
+    exit(1)
+
 vessel = conn.space_center.active_vessel
 control = vessel.control
 flight = vessel.flight(vessel.orbit.body.reference_frame)
 
 # target = 15
 target = args.target  # target altitude above the surface, in meters
+print('Target altitude set:' + str(target))
 g = 9.81
 while True:
-
+    os.system('cls')
+    print('----------------------------------------')
+    print('Target altitude: ' + str(target))
     alt_error = target - flight.surface_altitude
+    print('Current altitude error:' + str(alt_error))
 
     # compute the desired acceleration:
     #   g   to counteract gravity
@@ -27,5 +39,8 @@ while True:
     # Compute throttle setting using newton's law F=ma
     F = vessel.mass * a
     control.throttle = F / vessel.available_thrust
+    print('----------------------------------------')
+    print('Force: ' + str(F))
+    print('Throttle: ' + str(control.throttle))
 
 time.sleep(0.01)
