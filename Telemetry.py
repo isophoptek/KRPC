@@ -83,7 +83,7 @@ def log_launch(path, interval):
                     "{aero_force},"
                     "{drag},"
                     "{t_velocity},"
-                    "\n").format(met=str(timedelta(seconds=int(conn_log_launch.space_center.ut))),
+                    "\n").format(met=str(timedelta(seconds=int(missionelapsedtime))),
                                  asl=int(meanaltitude()),
                                  ap=int(apoapsis()),
                                  toa=str(timedelta(seconds=int(time_to_ap))),
