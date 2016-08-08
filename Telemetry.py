@@ -44,10 +44,10 @@ def log_launch(path, interval):
         drag = conn_log_launch.add_stream(getattr, flight(ref_frame), 'drag')
         terminalvelocity = conn_log_launch.add_stream(getattr, flight(ref_frame), 'terminal_velocity')
 
-        fileName = str(vessel.name) + "_Log_Launch.csv"
-        outFile = str(path) + str(fileName)
+        filename = str(vessel.name) + "_Log_Launch.csv"
+        filename = str(path) + str(filename)
 
-        with open(outFile, mode='a+') as exportFile:
+        with open(filename, mode='a+') as exportFile:
             exportFile.write('MET,')
             exportFile.write('ASL,')
             exportFile.write('Ap,')
