@@ -7,14 +7,8 @@ def log_launch(path, interval):
         from time import sleep
         from datetime import timedelta
 
-        try:
-            print('Seeking connection, please ensure server is running...')
-            conn_log_launch = krpc.connect(name='log_launch')
-
-        except krpc.error.NetworkError as e:
-            print('Connection to server could not be established.')
-            print('Check if server is running and accepts connections, accept connection manually if necessary.')
-            exit(1)
+        print('Seeking connection, please ensure server is running...')
+        conn_log_launch = krpc.connect(name='log_launch')
 
         vessel = conn_log_launch.space_center.active_vessel
         ref_frame = vessel.surface_reference_frame
@@ -46,6 +40,8 @@ def log_launch(path, interval):
 
         filename = str(vessel.name) + "_Log_Launch.csv"
         filename = str(path) + str(filename)
+        print('Generated output path:')
+        print(filename)
 
         with open(filename, mode='a+') as exportFile:
             exportFile.write('MET,')
@@ -101,3 +97,34 @@ def log_launch(path, interval):
                                  t_velocity=int(terminalvelocity()), )
             exportFile.write(line)
             sleep(interval)
+
+        exportFile.close()
+
+        missionelapsedtime.remove()
+        meanaltitude.remove()
+        apoapsis.remove()
+        time_to_ap.remove()
+        periapsis.remove()
+        time_to_pe.remove()
+        inclination.remove()
+        pitch.remove()
+        aoa.remove()
+        currentgforce.remove()
+        velocity.remove()
+        atmo_density.remove()
+        dynamic_pressure.remove()
+        aerodynamic_force.remove()
+        drag.remove()
+        terminalvelocity.remove()
+        conn_log_launch.close()
+
+
+def delta_drone():
+    import krpc
+    from time import sleep
+    from datetime import timedelta
+
+    conn = krpc.connect(name='Telemetry')
+    vessel = conn.space_center.active_vessel
+    flight = vessel.flight
+    orbit = vessel.orbit
