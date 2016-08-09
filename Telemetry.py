@@ -6,6 +6,7 @@ def log_launch(path, interval):
         import krpc
         from time import sleep
         from datetime import timedelta
+        from math import radians
 
         print('Seeking connection, please ensure server is running...')
         conn_log_launch = krpc.connect(name='log_launch')
@@ -31,12 +32,12 @@ def log_launch(path, interval):
         pitch = conn_log_launch.add_stream(getattr, flight(ref_frame), 'pitch')
         aoa = conn_log_launch.add_stream(getattr, flight(ref_frame), 'angle_of_attack')
         currentgforce = conn_log_launch.add_stream(getattr, flight(ref_frame), 'g_force')
-        velocity = conn_log_launch.add_stream(getattr, flight(ref_frame), 'velocity')
+        speed = conn_log_launch.add_stream(getattr, flight(ref_frame), 'speed')
         atmo_density = conn_log_launch.add_stream(getattr, flight(ref_frame), 'atmosphere_density')
         dynamic_pressure = conn_log_launch.add_stream(getattr, flight(ref_frame), 'dynamic_pressure')
-        aerodynamic_force = conn_log_launch.add_stream(getattr, flight(ref_frame), 'aerodynamic_force')
-        drag = conn_log_launch.add_stream(getattr, flight(ref_frame), 'drag')
-        terminalvelocity = conn_log_launch.add_stream(getattr, flight(ref_frame), 'terminal_velocity')
+        drag = conn_log_launch.add_stream(getattr, flight(ref_frame), 'drag_coefficient')
+        thrust_specific_fuel_consumption = conn_log_launch.add_stream(getattr, flight(ref_frame),
+                                                                      'thrust_specific_fuel_consumption')
 
         filename = str(vessel.name) + "_Log_Launch.csv"
         filename = str(path) + str(filename)
@@ -54,12 +55,11 @@ def log_launch(path, interval):
             exportFile.write('Pitch,')
             exportFile.write('AoA,')
             exportFile.write('G Force,')
-            exportFile.write('Velocity,')
+            exportFile.write('Speed,')
             exportFile.write('Atmo density,')
             exportFile.write('Dynamic pressure,')
-            exportFile.write('Aerodynamic force,')
             exportFile.write('Drag,')
-            exportFile.write('Terminal velocity,')
+            exportFile.write('thrust_specific_fuel_consumption,')
             exportFile.write("\n")
 
         while True:
@@ -73,10 +73,9 @@ def log_launch(path, interval):
                     "{pitch},"
                     "{aoa},"
                     "{g_Force},"
-                    "{velocity},"
+                    "{speed},"
                     "{atmo_density},"
                     "{dyn_pressure},"
-                    "{aero_force},"
                     "{drag},"
                     "{t_velocity},"
                     "\n").format(met=str(timedelta(seconds=int(missionelapsedtime))),
@@ -85,16 +84,15 @@ def log_launch(path, interval):
                                  toa=str(timedelta(seconds=int(time_to_ap))),
                                  pe=int(periapsis()),
                                  top=str(timedelta(seconds=int(time_to_pe))),
-                                 inc=int(inclination()),
+                                 inc=radians(int(inclination())),
                                  pitch=int(pitch()),
                                  aoa=int(aoa()),
                                  g_Force=int(currentgforce()),
-                                 velocity=int(velocity()),
+                                 speed=int(speed()),
                                  atmo_density=int(atmo_density()),
                                  dyn_pressure=int(dynamic_pressure()),
-                                 aero_force=int(aerodynamic_force()),
                                  drag=int(drag()),
-                                 t_velocity=int(terminalvelocity()), )
+                                 t_velocity=int(thrust_specific_fuel_consumption()), )
             exportFile.write(line)
             sleep(interval)
 
@@ -110,12 +108,11 @@ def log_launch(path, interval):
         pitch.remove()
         aoa.remove()
         currentgforce.remove()
-        velocity.remove()
+        speed.remove()
         atmo_density.remove()
         dynamic_pressure.remove()
-        aerodynamic_force.remove()
         drag.remove()
-        terminalvelocity.remove()
+        thrust_specific_fuel_consumption.remove()
         conn_log_launch.close()
 
 
@@ -143,24 +140,25 @@ def delta_drone():
     pitch = conn.add_stream(getattr, flight(ref_frame), 'pitch')
     aoa = conn.add_stream(getattr, flight(ref_frame), 'angle_of_attack')
     sideslip = conn.add_stream(getattr, flight(ref_frame), 'sideslip_angle')
-    temp_stat = conn.add_stream(getattr, flight(ref_frame), 'static_temperature')
-    stall_friction = conn.add_stream(getattr, flight(ref_frame), 'stall_friction')
+    temp_stat = conn.add_stream(getattr, flight(ref_frame), 'static_air_temperature')
+    stall_fraction = conn.add_stream(getattr, flight(ref_frame), 'stall_fraction')
     drag_coefficient = conn.add_stream(getattr, flight(ref_frame), 'drag_coefficient')
     lift_coefficient = conn.add_stream(getattr, flight(ref_frame), 'lift_coefficient')
 
-    os.system('cls')
-    print(str(timedelta(seconds=int(missionelapsedtime))))
-    print(meanaltitude())
-    print(apoapsis())
-    print(str(timedelta(seconds=int(time_to_ap))))
-    print(periapsis())
-    print(str(timedelta(seconds=int(time_to_pe))))
-    print(inclination())
-    print(pitch())
-    print(aoa())
-    print(sideslip())
-    print(temp_stat())
-    print(stall_friction())
-    print(drag_coefficient())
-    print(lift_coefficient())
-    sleep(5)
+    while True:
+        os.system('cls')
+        print('MET:' + str(timedelta(seconds=int(missionelapsedtime()))))
+        print('ASL:' + str(meanaltitude()))
+        print('Ap:' + str(apoapsis()))
+        print('Time to Ap:' + str(timedelta(seconds=int(time_to_ap()))))
+        print('Pe:' + str(periapsis()))
+        print('Time to Pe:' + str(timedelta(seconds=int(time_to_pe()))))
+        print('Inc:' + str(inclination()))
+        print('Pitch:' + str(pitch()))
+        print('AoA:' + str(aoa()))
+        print('Sideslip:' + str(sideslip()))
+        print('Static temp:' + str(temp_stat()))
+        print('Stall:' + str(stall_fraction()))
+        print('Drag:' + str(drag_coefficient()))
+        print('Lift:' + str(lift_coefficient()))
+        sleep(1)
