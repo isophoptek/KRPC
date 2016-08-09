@@ -120,11 +120,47 @@ def log_launch(path, interval):
 
 
 def delta_drone():
+
+    import os
     import krpc
     from time import sleep
     from datetime import timedelta
 
     conn = krpc.connect(name='Telemetry')
     vessel = conn.space_center.active_vessel
+    ref_frame = vessel.surface_reference_frame
     flight = vessel.flight
     orbit = vessel.orbit
+
+    # add streams
+    missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
+    meanaltitude = conn.add_stream(getattr, flight(ref_frame), 'mean_altitude')
+    apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
+    time_to_ap = conn.add_stream(getattr, orbit, 'time_to_apoapsis')
+    periapsis = conn.add_stream(getattr, orbit, 'periapsis_altitude')
+    time_to_pe = conn.add_stream(getattr, orbit, 'time_to_periapsis')
+    inclination = conn.add_stream(getattr, orbit, 'inclination')
+    pitch = conn.add_stream(getattr, flight(ref_frame), 'pitch')
+    aoa = conn.add_stream(getattr, flight(ref_frame), 'angle_of_attack')
+    sideslip = conn.add_stream(getattr, flight(ref_frame), 'sideslip_angle')
+    temp_stat = conn.add_stream(getattr, flight(ref_frame), 'static_temperature')
+    stall_friction = conn.add_stream(getattr, flight(ref_frame), 'stall_friction')
+    drag_coefficient = conn.add_stream(getattr, flight(ref_frame), 'drag_coefficient')
+    lift_coefficient = conn.add_stream(getattr, flight(ref_frame), 'lift_coefficient')
+
+    os.system('cls')
+    print(str(timedelta(seconds=int(missionelapsedtime))))
+    print(meanaltitude())
+    print(apoapsis())
+    print(str(timedelta(seconds=int(time_to_ap))))
+    print(periapsis())
+    print(str(timedelta(seconds=int(time_to_pe))))
+    print(inclination())
+    print(pitch())
+    print(aoa())
+    print(sideslip())
+    print(temp_stat())
+    print(stall_friction())
+    print(drag_coefficient())
+    print(lift_coefficient())
+    sleep(5)
