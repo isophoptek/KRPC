@@ -7,11 +7,12 @@ def sectionheader(sectiontitle):
     print('----------------------------------------')
 
 
-def uplink():
+def uplink(uplink_name):
+    import krpc
     global mc_uplink
-    print('connecting to server as MC_Uplink')
+    print('connecting to server as ' + str(uplink_name))
     try:
-        mc_uplink = krpc.connect(name='MC_Uplink')
+        mc_uplink = krpc.connect(name=str(uplink_name))
     except krpc.error.NetworkError:
         print('Connection to server could not be established.')
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
