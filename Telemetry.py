@@ -1,5 +1,7 @@
 # Telemetry For KSP
 
+# Requies FAR
+
 
 def log_launch(path, interval):
 
@@ -116,12 +118,13 @@ def log_launch(path, interval):
         conn_log_launch.close()
 
 
-def delta_drone():
+def delta_drone(path):
 
     import os
     import krpc
     from time import sleep
     from datetime import timedelta
+    from math import radians
 
     conn = krpc.connect(name='Telemetry')
     vessel = conn.space_center.active_vessel
@@ -137,6 +140,7 @@ def delta_drone():
     periapsis = conn.add_stream(getattr, orbit, 'periapsis_altitude')
     time_to_pe = conn.add_stream(getattr, orbit, 'time_to_periapsis')
     inclination = conn.add_stream(getattr, orbit, 'inclination')
+    speed = conn.add_stream(getattr, flight(ref_frame), 'speed')
     pitch = conn.add_stream(getattr, flight(ref_frame), 'pitch')
     aoa = conn.add_stream(getattr, flight(ref_frame), 'angle_of_attack')
     sideslip = conn.add_stream(getattr, flight(ref_frame), 'sideslip_angle')
@@ -144,21 +148,113 @@ def delta_drone():
     stall_fraction = conn.add_stream(getattr, flight(ref_frame), 'stall_fraction')
     drag_coefficient = conn.add_stream(getattr, flight(ref_frame), 'drag_coefficient')
     lift_coefficient = conn.add_stream(getattr, flight(ref_frame), 'lift_coefficient')
+    mass = conn.add_stream(getattr, vessel, 'mass')
+    dry_mass = conn.add_stream(getattr, vessel, 'dry_mass')
 
-    while True:
-        os.system('cls')
-        print('MET:' + str(timedelta(seconds=int(missionelapsedtime()))))
-        print('ASL:' + str(meanaltitude()))
-        print('Ap:' + str(apoapsis()))
-        print('Time to Ap:' + str(timedelta(seconds=int(time_to_ap()))))
-        print('Pe:' + str(periapsis()))
-        print('Time to Pe:' + str(timedelta(seconds=int(time_to_pe()))))
-        print('Inc:' + str(inclination()))
-        print('Pitch:' + str(pitch()))
-        print('AoA:' + str(aoa()))
-        print('Sideslip:' + str(sideslip()))
-        print('Static temp:' + str(temp_stat()))
-        print('Stall:' + str(stall_fraction()))
-        print('Drag:' + str(drag_coefficient()))
-        print('Lift:' + str(lift_coefficient()))
-        sleep(1)
+    # open file for write
+
+    filename = str(vessel.name) + "_Telemetry.csv"
+    filename = str(path) + str(filename)
+
+    # add header
+
+    with open(filename, mode='a+') as exportFile:
+        exportFile.write('MET;')
+        exportFile.write('ASL;')
+        exportFile.write('Ap;')
+        exportFile.write('ToA;')
+        exportFile.write('Pe;')
+        exportFile.write('ToP;')
+        exportFile.write('Inc;')
+        exportFile.write('Speed;')
+        exportFile.write('Pitch;')
+        exportFile.write('AoA;')
+        exportFile.write('Sideslip;')
+        exportFile.write('Static temp;')
+        exportFile.write('Stall;')
+        exportFile.write('Drag;')
+        exportFile.write('Lift;')
+        exportFile.write('Mass;')
+        exportFile.write('Dry mass;')
+        exportFile.write(';')
+        exportFile.write("\n")
+
+    try:
+        while True:
+            os.system('cls')
+            print('MET:' + str(timedelta(seconds=int(missionelapsedtime()))))
+            print('ASL:' + str(meanaltitude()))
+            print('Ap:' + str(apoapsis()))
+            print('Time to Ap:' + str(timedelta(seconds=int(time_to_ap()))))
+            print('Pe:' + str(periapsis()))
+            print('Time to Pe:' + str(timedelta(seconds=int(time_to_pe()))))
+            print('Inc:' + str(inclination()))
+            print('Speed:' + str(speed()))
+            print('Pitch:' + str(pitch()))
+            print('AoA:' + str(aoa()))
+            print('Sideslip:' + str(sideslip()))
+            print('Static temp:' + str(temp_stat()))
+            print('Stall:' + str(stall_fraction()))
+            print('Drag:' + str(drag_coefficient()))
+            print('Lift:' + str(lift_coefficient()))
+            print('Mass:' + str(mass()))
+            print('Dry mass:' + str(dry_mass()))
+
+            line = ("{met},"
+                    "{asl},"
+                    "{ap},"
+                    "{toa},"
+                    "{pe},"
+                    "{top},"
+                    "{inc},"
+                    "{speed},"
+                    "{pitch},"
+                    "{aoa},"
+                    "{sideslip},"
+                    "{static_temp},"
+                    "{stall},"
+                    "{drag},"
+                    "{lift},"
+                    "{mass},"
+                    "{dry_mass},"
+                    "\n").format(met=str(timedelta(seconds=int(missionelapsedtime))),
+                                 asl=int(meanaltitude()),
+                                 ap=int(apoapsis()),
+                                 toa=str(timedelta(seconds=int(time_to_ap))),
+                                 pe=int(periapsis()),
+                                 top=str(timedelta(seconds=int(time_to_pe))),
+                                 inc=radians(int(inclination())),
+                                 speed=int(speed()),
+                                 pitch=int(pitch()),
+                                 aoa=int(aoa()),
+                                 sideslip=int(sideslip()),
+                                 static_temp=int(temp_stat()),
+                                 stall=int(stall_fraction()),
+                                 drag=int(drag_coefficient()),
+                                 lift=int(lift_coefficient()),
+                                 mass=int(mass()),
+                                 dry_mass=int(dry_mass()),)
+            exportFile.write(line)
+            sleep(1)
+    except KeyboardInterrupt:
+        print('Telementry stream interupted by user.')
+
+    # remove streams
+    missionelapsedtime.remove()
+    meanaltitude.remove()
+    apoapsis.remove()
+    time_to_ap.remove()
+    periapsis.remove()
+    time_to_pe.remove()
+    inclination.remove()
+    speed.remove()
+    pitch.remove()
+    aoa.remove()
+    sideslip.remove()
+    temp_stat.remove()
+    stall_fraction.remove()
+    drag_coefficient.remove()
+    lift_coefficient.remove()
+    mass.remove()
+    dry_mass.remove()
+    conn.close()
