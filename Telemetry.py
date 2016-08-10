@@ -131,6 +131,8 @@ def delta_drone(path, plot=False):
     ref_frame = vessel.surface_reference_frame
     flight = vessel.flight
     orbit = vessel.orbit
+    display = conn.ui.add_canvas()
+    display.add_text('Telemetry log active')
 
     # add streams
     missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
