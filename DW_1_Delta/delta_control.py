@@ -9,7 +9,7 @@ def keep_level_pitch():
         vessel = conn.space_center.active_vessel
         ref_frame = vessel.surface_reference_frame
         flight = vessel.flight
-        ap = vessel.autopilot
+        ap = vessel.auto_pilot
 
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
         ap.target_pitch = 0
@@ -38,7 +38,7 @@ def keep_level_throttle(pitch):
         vessel = conn.space_center.active_vessel
         ref_frame = vessel.surface_reference_frame
         flight = vessel.flight
-        ap = vessel.autopilot
+        ap = vessel.auto_pilot
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
         ap.target_pitch = pitch
         ap.engage()
