@@ -13,6 +13,7 @@ def keep_level_pitch():
 
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
         ap.target_pitch = 0
+        ap.target_roll = 0
         ap.engage()
 
         try:
@@ -41,6 +42,7 @@ def keep_level_throttle(pitch):
         ap = vessel.auto_pilot
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
         ap.target_pitch = pitch
+        ap.target_roll = 0
         ap.engage()
 
         try:
