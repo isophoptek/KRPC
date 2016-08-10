@@ -12,16 +12,20 @@ def keep_level_pitch():
         ap = vessel.auto_pilot
 
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
+        pitch_stream = conn.add_stream(getattr, flight(ref_frame), 'pitch')
         ap.target_pitch = 0
         ap.target_roll = 0
         ap.engage()
 
         try:
             while True:
-                if vertical_speed < 0:
-                    ap.target_pitch += 1
+                if vertical_speed > 0:
+                    if pitch_stream() > -5:
+                        ap.target_pitch -= 1
+                    else:
+                        ap.target_pitch += 1
                 elif vertical_speed < 0:
-                    ap.target_pitch -= 1
+                    ap.target_pitch += 1
                 sleep(0.01)
         except KeyboardInterrupt:
             print('Interupted')
@@ -31,7 +35,7 @@ def keep_level_pitch():
         conn.close()
 
 
-def keep_level_throttle(pitch):
+def keep_level_throttle(pitch, roll):
         import krpc
         from time import sleep
 
@@ -42,7 +46,7 @@ def keep_level_throttle(pitch):
         ap = vessel.auto_pilot
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
         ap.target_pitch = pitch
-        ap.target_roll = 0
+        ap.target_roll = roll
         ap.engage()
 
         try:
