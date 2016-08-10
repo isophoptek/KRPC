@@ -148,6 +148,8 @@ def delta_drone(path, plot=False):
     stall_fraction = conn.add_stream(getattr, flight(ref_frame), 'stall_fraction')
     drag_coefficient = conn.add_stream(getattr, flight(ref_frame), 'drag_coefficient')
     lift_coefficient = conn.add_stream(getattr, flight(ref_frame), 'lift_coefficient')
+    atmo_density = conn.add_stream(getattr, flight(ref_frame), 'atmosphere_density')
+    dynamic_pressure = conn.add_stream(getattr, flight(ref_frame), 'dynamic_pressure')
     mass = conn.add_stream(getattr, vessel, 'mass')
     dry_mass = conn.add_stream(getattr, vessel, 'dry_mass')
 
@@ -174,6 +176,8 @@ def delta_drone(path, plot=False):
         exportFile.write('Stall;')
         exportFile.write('Drag;')
         exportFile.write('Lift;')
+        exportFile.write('Atmospheric Density;')
+        exportFile.write('Dynamic Pressure;')
         exportFile.write('Mass;')
         exportFile.write('Dry mass;')
         exportFile.write(';')
@@ -197,6 +201,8 @@ def delta_drone(path, plot=False):
             print('Stall:' + str(stall_fraction()))
             print('Drag:' + str(drag_coefficient()))
             print('Lift:' + str(lift_coefficient()))
+            print('Atmospheric Density:' + str(atmo_density()))
+            print('Dynamic Pressure:' + str(dynamic_pressure()))
             print('Mass:' + str(mass()))
             print('Dry mass:' + str(dry_mass()))
 
@@ -215,6 +221,8 @@ def delta_drone(path, plot=False):
                     "{stall},"
                     "{drag},"
                     "{lift},"
+                    "{atmo_density},"
+                    "{dyn_pressure},"
                     "{mass},"
                     "{dry_mass},"
                     "\n").format(met=str(timedelta(seconds=int(missionelapsedtime))),
@@ -232,6 +240,8 @@ def delta_drone(path, plot=False):
                                  stall=int(stall_fraction()),
                                  drag=int(drag_coefficient()),
                                  lift=int(lift_coefficient()),
+                                 atmo_density=int(atmo_density()),
+                                 dyn_pressure=int(dynamic_pressure()),
                                  mass=int(mass()),
                                  dry_mass=int(dry_mass()),)
             exportFile.write(line)
