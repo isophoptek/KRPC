@@ -79,7 +79,7 @@ def log_launch(path, interval):
                     "{atmo_density},"
                     "{dyn_pressure},"
                     "{drag},"
-                    "{t_velocity},"
+                    "{t_isp},"
                     "\n").format(met=str(timedelta(seconds=int(missionelapsedtime))),
                                  asl=int(meanaltitude()),
                                  ap=int(apoapsis()),
@@ -94,7 +94,7 @@ def log_launch(path, interval):
                                  atmo_density=int(atmo_density()),
                                  dyn_pressure=int(dynamic_pressure()),
                                  drag=int(drag()),
-                                 t_velocity=int(thrust_specific_fuel_consumption()), )
+                                 t_isp=int(thrust_specific_fuel_consumption()), )
             exportFile.write(line)
             sleep(interval)
 
@@ -194,7 +194,7 @@ def delta_drone(path, plot=False):
             print('Time to Ap:' + str(timedelta(seconds=int(time_to_ap()))))
             print('Pe:' + str(periapsis()))
             print('Time to Pe:' + str(timedelta(seconds=int(time_to_pe()))))
-            print('Inc:' + str(inclination()))
+            print('Inc:' + str(radians(int(inclination()))))
             print('Speed:' + str(speed()))
             print('Pitch:' + str(pitch()))
             print('AoA:' + str(aoa()))
@@ -273,4 +273,5 @@ def delta_drone(path, plot=False):
     lift_coefficient.remove()
     mass.remove()
     dry_mass.remove()
+    display.remove()
     conn.close()
