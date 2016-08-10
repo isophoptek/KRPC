@@ -118,7 +118,7 @@ def log_launch(path, interval):
         conn_log_launch.close()
 
 
-def delta_drone(path):
+def delta_drone(path, plot=False):
 
     import os
     import krpc
@@ -235,6 +235,10 @@ def delta_drone(path):
                                  mass=int(mass()),
                                  dry_mass=int(dry_mass()),)
             exportFile.write(line)
+            if plot:
+                print('plot is true')
+                from matplotlib import pyplot
+
             sleep(1)
     except KeyboardInterrupt:
         print('Telementry stream interupted by user.')
