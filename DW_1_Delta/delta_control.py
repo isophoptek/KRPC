@@ -10,7 +10,7 @@ def keep_level_pitch():
         ref_frame = vessel.surface_reference_frame
         flight = vessel.flight
         ap = vessel.auto_pilot
-
+        ap.reference_frame = vessel.orbital_reference_frame
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
         pitch_stream = conn.add_stream(getattr, flight(ref_frame), 'pitch')
         ap.target_pitch = 0
@@ -44,6 +44,7 @@ def keep_level_throttle(pitch, roll):
         ref_frame = vessel.surface_reference_frame
         flight = vessel.flight
         ap = vessel.auto_pilot
+        ap.reference_frame = vessel.orbital_reference_frame
         vertical_speed = conn.add_stream(getattr, flight(ref_frame), 'vertical_speed')
         ap.target_pitch = pitch
         ap.target_roll = roll
