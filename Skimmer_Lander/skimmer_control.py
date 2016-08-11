@@ -1,4 +1,4 @@
-def ascend_to_ap(target_ap):
+def ascend_to_ap(target_ap, target_heading):
     import krpc
 
     conn = krpc.connect(name='ascend_procedure')
@@ -19,3 +19,9 @@ def ascend_to_ap(target_ap):
 
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
+
+    ap.target_pitch = 90
+    ap.engage()
+    vessel.control.throttle = 1
+
+    while meanaltitude < ground_clearance_altitude:

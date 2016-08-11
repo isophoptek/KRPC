@@ -53,9 +53,9 @@ def keep_level_throttle(pitch, roll):
         try:
             while True:
                 if vertical_speed < 0:
-                    vessel.control.throttle += 0.1
+                    vessel.control.throttle += 0.01
                 elif vertical_speed > 0:
-                    vessel.control.throttle -= 0.1
+                    vessel.control.throttle -= 0.01
                 sleep(0.01)
         except KeyboardInterrupt:
             print('Interupted')
