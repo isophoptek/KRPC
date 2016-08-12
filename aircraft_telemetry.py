@@ -23,8 +23,11 @@ ref_frame_vel = vessel.orbit.body.reference_frame
 ref_frame_orbit = vessel.orbital_reference_frame
 flight = vessel.flight
 orbit = vessel.orbit
-display = conn.ui.add_canvas()
-display.add_text('Telemetry log active')
+display = conn.ui
+canvas = display.add_canvas()
+panel = canvas.add_panel()
+gui_message = panel.add_text('Telemetry log active')
+gui_message.color = 255, 0, 0
 
 # add streams
 missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
