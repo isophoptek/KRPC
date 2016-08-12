@@ -24,10 +24,14 @@ ref_frame_orbit = vessel.orbital_reference_frame
 flight = vessel.flight
 orbit = vessel.orbit
 display = conn.ui
+screen_size = display.stock_canvas.rect_transform.size
 canvas = display.add_canvas()
 panel = canvas.add_panel()
+panel.rect_transrorm.size = (200, 100)
+panel.rect_transrorm.position = (110-(screen_size[0]/2),0)
 gui_message = panel.add_text('Telemetry log active')
-gui_message.color = 255, 0, 0
+gui_message.color = (255, 0, 0)
+gui_message.rect_transform.position = (0, -20)
 
 # add streams
 missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
