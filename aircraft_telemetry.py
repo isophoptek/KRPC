@@ -59,7 +59,7 @@ dry_mass = conn.add_stream(getattr, vessel, 'dry_mass')
 
 # open file for write
 
-filename = str(vessel.name) + str(missionelapsedtime()) + "_Telemetry.csv"
+filename = str(vessel.name) + "_" + str(missionelapsedtime()) + "_Telemetry.csv"
 filename = str(outFile) + str(filename)
 
 # add header
