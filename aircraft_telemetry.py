@@ -34,6 +34,7 @@ gui_message.color = (255, 0, 0)
 gui_message.rect_transform.position = (0, -20)
 
 # add streams
+
 missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
 meanaltitude = conn.add_stream(getattr, flight(ref_frame), 'mean_altitude')
 apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
@@ -86,6 +87,8 @@ try:
         exportFile.write(';')
         exportFile.write("\n")
 
+# write content
+
     while True:
         line = ("{met};"
                 "{asl};"
@@ -133,6 +136,7 @@ except KeyboardInterrupt:
     print('Telementry stream interupted by user.')
 
 # remove streams
+
 missionelapsedtime.remove()
 meanaltitude.remove()
 apoapsis.remove()
