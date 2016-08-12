@@ -23,12 +23,15 @@ flight = vessel.flight(vessel.orbit.body.reference_frame)
 target = args.target  # target altitude above the surface, in meters
 print('Target altitude set:' + str(target))
 g = 9.81
+refresh_freq = 0
 while True:
-    os.system('cls')
-    print('----------------------------------------')
-    print('Target altitude: ' + str(target))
+    if refresh_freq == 1:
+        os.system('cls')
+        print('----------------------------------------')
+        print('Target altitude: ' + str(target))
     alt_error = target - flight.surface_altitude
-    print('Current altitude error:' + str(alt_error))
+    if refresh_freq == 1:
+        print('Current altitude error:' + str(alt_error))
 
     # compute the desired acceleration:
     #   g   to counteract gravity
@@ -39,8 +42,10 @@ while True:
     # Compute throttle setting using newton's law F=ma
     F = vessel.mass * a
     control.throttle = F / vessel.available_thrust
-    print('----------------------------------------')
-    print('Force: ' + str(F))
-    print('Throttle: ' + str(control.throttle))
-
+    if refresh_freq == 1:
+        print('----------------------------------------')
+        print('Force: ' + str(F))
+        print('Throttle: ' + str(control.throttle))
+        refresh_freq = 0
+    refresh_freq += 0.01
 time.sleep(0.01)
