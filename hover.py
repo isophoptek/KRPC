@@ -23,7 +23,7 @@ flight = vessel.flight(vessel.orbit.body.reference_frame)
 target = args.target  # target altitude above the surface, in meters
 print('Target altitude set:' + str(target))
 g = 9.81
-refresh_freq = 0
+refresh_freq = float(0)
 while True:
     if refresh_freq == 1:
         os.system('cls')
