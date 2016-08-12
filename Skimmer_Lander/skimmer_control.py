@@ -22,21 +22,40 @@ def ascend_to_ap(target_ap, target_heading):
 
     ap.target_pitch = 0
     ap.target_heading = target_heading
+
+    print('Script initialized.')
+    print('-------------------')
+    print('Pitch set to: ' + str(ap.target_pitch))
+    print('Headng set to: ' + str(ap.target_heading))
+
     ap.engage()
+
+    print('-------------------')
+    print('Autopilot engaged')
+    print('-------------------')
 
     while meanaltitude < ground_clearance_altitude:
         vessel.control.throttle = 1
+        print('Throttle set to maximum')
+        print('handling thrust to match 40s ToA')
         if time_to_ap < 40 and vessel.control.throttle != 1:
             vessel.control.throttle += 0.01
         elif time_to_ap > 40:
             vessel.control.throttle -= 0.01
 
+    print('---------------------------------')
+    print('Ground clearence altitude reached')
+    print('---------------------------------')
     while meanaltitude < ap_vector_clearance_altitude:
         ap.target_pitch = 45
         if time_to_ap < 40 and vessel.control.throttle != 1:
             vessel.control.throttle += 0.01
         elif time_to_ap > 40:
             vessel.control.throttle -= 0.01
+
+    print('---------------------------------')
+    print('Vector clearence altitude reached')
+    print('---------------------------------')
 
     while apoapsis < target_ap:
         ap.target_direction = (0, 1, 0)
