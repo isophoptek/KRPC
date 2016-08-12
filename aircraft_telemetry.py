@@ -1,5 +1,7 @@
 # Telemetry for aircraft
 
+# requies FAR
+
 import krpc
 import argparse
 from time import sleep
