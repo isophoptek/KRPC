@@ -26,7 +26,7 @@ def keep_level_pitch():
                         ap.target_pitch += 1
                 elif vertical_speed < 0:
                     ap.target_pitch += 1
-                sleep(0.01)
+                sleep(0.5)
         except KeyboardInterrupt:
             print('Interupted')
 
