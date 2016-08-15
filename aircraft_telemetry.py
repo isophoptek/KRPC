@@ -9,16 +9,17 @@ from datetime import timedelta
 from math import radians
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--path", help="Path fox export")
-parser.add_argument("-n", "--polls", help="Number of polls", type=int, default=1)
+parser.add_argument("-p", "--path", help="Path for export")
 parser.add_argument("-i", "--interval", help="Interval between polls", type=int, default=1)
 args = parser.parse_args()
 
-num_of_polls = args.polls
 interval = args.interval
 outFile = args.path
 
+print('Argument parsed')
+print('opening connection...')
 conn = krpc.connect(name='Telemetry')
+print('getting active vessel...')
 vessel = conn.space_center.active_vessel
 ref_frame = vessel.surface_reference_frame
 ref_frame_vel = vessel.orbit.body.reference_frame
@@ -39,7 +40,7 @@ stop_button.rect_transform.position = (0, 20)
 stop_button_clicked = conn.add_stream(getattr, stop_button, "clicked")
 
 # add streams
-
+print('setting up datastreams...')
 missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
 meanaltitude = conn.add_stream(getattr, flight(ref_frame), 'mean_altitude')
 apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
@@ -62,14 +63,14 @@ mass = conn.add_stream(getattr, vessel, 'mass')
 dry_mass = conn.add_stream(getattr, vessel, 'dry_mass')
 
 # open file for write
-
+print('setting up export...')
 filename = str(vessel.name) + "_" + str(missionelapsedtime()) + "_Telemetry.csv"
 filename = str(outFile) + str(filename)
 
 # add header
 
 try:
-
+    print('writing file header...')
     with open(filename, mode='a+') as exportFile:
         exportFile.write('MET;')
         exportFile.write('ASL;')
@@ -95,7 +96,7 @@ try:
         exportFile.write("\n")
 
 # write content
-
+    print('sending data...')
     while True:
         line = ("{met};"
                 "{asl};"
@@ -142,11 +143,11 @@ try:
 
         sleep(interval)
 except KeyboardInterrupt:
-    print('Telementry stream interupted by user.')
+    print('Telementry stream interupted by user. (keyboardinterupt)')
 except stop_button_clicked():
-    print('Telementry stream interupted by user.')
+    print('Telementry stream interupted by user. (stop_button_clicked)')
 finally:
-
+    print('ending dataloop...')
     # remove streams
 
     missionelapsedtime.remove()
@@ -168,4 +169,7 @@ finally:
     mass.remove()
     dry_mass.remove()
     canvas.remove()
+    # close connection
     conn.close()
+
+print('streams and connection closed.')

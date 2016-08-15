@@ -160,7 +160,7 @@ def delta_drone():
     # open file for write
 
     path = 'D:/PyCharm/'
-    filename = str(vessel.name) + "_Telemetry.csv"
+    filename = str(vessel.name)+ "_" + str(missionelapsedtime()) + "_Telemetry.csv"
     filename = str(path) + str(filename)
 
     # add header
