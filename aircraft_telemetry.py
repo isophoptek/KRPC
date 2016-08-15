@@ -16,7 +16,9 @@ args = parser.parse_args()
 interval = args.interval
 outFile = args.path
 
-print('Argument parsed')
+print('Argument parsed:')
+print('path set to: ' + str(outFile))
+print('polling interval: ' + str(interval))
 print('opening connection...')
 conn = krpc.connect(name='Telemetry')
 print('getting active vessel...')
