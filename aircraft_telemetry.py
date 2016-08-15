@@ -54,6 +54,7 @@ drag_coefficient = conn.add_stream(getattr, flight(ref_frame_orbit), 'drag_coeff
 lift_coefficient = conn.add_stream(getattr, flight(ref_frame_orbit), 'lift_coefficient')
 atmo_density = conn.add_stream(getattr, flight(ref_frame), 'atmosphere_density')
 dynamic_pressure = conn.add_stream(getattr, flight(ref_frame), 'dynamic_pressure')
+ballistic_coefficient = conn.add_stream(getattr, flight(ref_frame), 'ballistic_coefficient')
 mass = conn.add_stream(getattr, vessel, 'mass')
 dry_mass = conn.add_stream(getattr, vessel, 'dry_mass')
 
@@ -86,6 +87,7 @@ try:
         exportFile.write('Dynamic Pressure;')
         exportFile.write('Mass;')
         exportFile.write('Dry mass;')
+        exportFile.write('Ballistic Coefficient;')
         exportFile.write(';')
         exportFile.write("\n")
 
@@ -109,6 +111,7 @@ try:
                 "{lift};"
                 "{atmo_density};"
                 "{dyn_pressure};"
+                "{ball_coeff};"
                 "{mass};"
                 "{dry_mass};"
                 "\n").format(met=str(timedelta(seconds=int(missionelapsedtime()))),
@@ -128,6 +131,7 @@ try:
                              lift=lift_coefficient(),
                              atmo_density=atmo_density(),
                              dyn_pressure=dynamic_pressure(),
+                             ball_coeff=ballistic_coefficient(),
                              mass=int(mass()),
                              dry_mass=int(dry_mass()),)
         with open(filename, mode='a+') as exportFile:
@@ -154,6 +158,7 @@ temp_stat.remove()
 stall_fraction.remove()
 drag_coefficient.remove()
 lift_coefficient.remove()
+ballistic_coefficient.remove()
 mass.remove()
 dry_mass.remove()
 canvas.remove()
