@@ -100,6 +100,9 @@ try:
 # write content
     print('sending data...')
     while True:
+        if stop_button_clicked():
+            print('Telementry stream interupted by user. (stop_button_clicked)')
+            break
         line = ("{met};"
                 "{asl};"
                 "{ap};"
@@ -146,8 +149,6 @@ try:
         sleep(interval)
 except KeyboardInterrupt:
     print('Telementry stream interupted by user. (keyboardinterupt)')
-except stop_button_clicked():
-    print('Telementry stream interupted by user. (stop_button_clicked)')
 finally:
     print('ending dataloop...')
     # remove streams
