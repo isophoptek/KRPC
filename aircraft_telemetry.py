@@ -69,6 +69,12 @@ print('setting up export...')
 filename = str(vessel.name) + "_" + str(missionelapsedtime()) + "_Telemetry.csv"
 filename = str(outFile) + str(filename)
 
+gui_message_path = panel.add_text(str(filename))
+gui_message_path.color = (0, 255, 0)
+gui_message_path.rect_transform.position = (0, -40)
+gui_message_path.size = 6
+
+
 # add header
 
 try:
@@ -101,6 +107,7 @@ try:
     print('sending data...')
     while True:
         if stop_button_clicked():
+            print('STOP signal recieved.')
             print('Telementry stream interupted by user. (stop_button_clicked)')
             break
         line = ("{met};"
