@@ -91,9 +91,9 @@ try:
         exportFile.write('Lift;')
         exportFile.write('Atmospheric Density;')
         exportFile.write('Dynamic Pressure;')
+        exportFile.write('Ballistic Coefficient;')
         exportFile.write('Mass;')
         exportFile.write('Dry mass;')
-        exportFile.write('Ballistic Coefficient;')
         exportFile.write(';')
         exportFile.write("\n")
 
