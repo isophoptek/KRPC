@@ -16,8 +16,15 @@ args = parser.parse_args()
 interval = args.interval
 outFile = args.path
 
+print('Argument parsed:')
+print('path set to: ' + str(outFile))
+print('polling interval: ' + str(interval))
+print('opening connection...')
+
 conn = krpc.connect(name='Engine Telemetry')
+print('getting active vessel...')
 vessel = conn.space_center.active_vessel
+print('setting up control uplink...')
 control = vessel.control
 
 display = conn.ui
@@ -48,12 +55,7 @@ engine_vacuum_specific_impulse = conn.add_stream(getattr, engine, 'vacuum_specif
 engine_propellant_names = conn.add_stream(getattr, engine, 'propellant_names')
 engine_propellant_ratios = conn.add_stream(getattr, engine, 'propellant_ratios')
 engine_has_fuel = conn.add_stream(getattr, engine, 'has_fuel')
-engine_throttle = conn.add_stream(getattr, engine, 'throttle')
-
-engine_throttle = 0
-for t in range(10,0,1):
-    print(t)
-    sleep(1)
+engine_throttle_stream = conn.add_stream(getattr, engine, 'throttle')
 
 # open file for write
 print('setting up export...')
@@ -77,7 +79,15 @@ try:
         exportFile.write('THROTTLE TEMP;')
         exportFile.write("\n")
 
+    engine_throttle = 0
+    print('throttle set to zero')
+    print('countdown:')
+    for t in range(10, 0, 1):
+        print(t)
+        sleep(1)
+    print('stage')
     control.activate_next_stage()
+    print('throttle set to maximum')
     engine_throttle = 1
 # write content
     print('sending data...')
@@ -112,7 +122,7 @@ try:
                              propellant_names=engine_propellant_names(),
                              propellant_ratios=engine_propellant_ratios(),
                              has_fuel=engine_has_fuel(),
-                             throttle=engine_throttle)
+                             throttle=engine_throttle_stream())
         with open(filename, mode='a+') as exportFile:
             exportFile.write(line)
 
@@ -121,4 +131,23 @@ except KeyboardInterrupt:
     print('Telementry stream interupted by user. (keyboardinterupt)')
 finally:
     print('ending dataloop...')
+    engine_throttle = 0
+    print('throttle set to zero')
+    print('closing steams')
+    missionelapsedtime.remove()
+    engine_is_active.remove()
+    engine_thrust.remove()
+    engine_available_thrust.remove()
+    engine_max_thrust.remove()
+    engine_max_vacuum_thrust.remove()
+    engine_specific_impulse.remove()
+    engine_vacuum_specific_impulse.remove()
+    engine_propellant_names.remove()
+    engine_propellant_ratios.remove()
+    engine_has_fuel.remove()
+    engine_throttle_stream.remove()
+    conn.close()
+
+print('streams and connection closed.')
+
 
