@@ -20,6 +20,19 @@ conn = krpc.connect(name='Engine Telemetry')
 vessel = conn.space_center.active_vessel
 control = vessel.control
 
+display = conn.ui
+screen_size = display.stock_canvas.rect_transform.size
+canvas = display.add_canvas()
+panel = canvas.add_panel()
+panel.rect_transform.size = (200, 100)
+panel.rect_transform.position = (110-(screen_size[0]/2), 0)
+gui_message = panel.add_text('Telemetry log active')
+gui_message.color = (0, 255, 0)
+gui_message.rect_transform.position = (0, -20)
+stop_button = panel.add_button("Stop transmission")
+stop_button.rect_transform.position = (0, 20)
+stop_button_clicked = conn.add_stream(getattr, stop_button, "clicked")
+
 engine = vessel.parts.engines[0]
 
 # add streams
@@ -34,4 +47,78 @@ engine_specific_impulse = conn.add_stream(getattr, engine, 'specific_impulse')
 engine_vacuum_specific_impulse = conn.add_stream(getattr, engine, 'vacuum_specific_impulse')
 engine_propellant_names = conn.add_stream(getattr, engine, 'propellant_names')
 engine_propellant_ratios = conn.add_stream(getattr, engine, 'propellant_ratios')
+engine_has_fuel = conn.add_stream(getattr, engine, 'has_fuel')
 engine_throttle = conn.add_stream(getattr, engine, 'throttle')
+
+engine_throttle = 0
+for t in range(10,0,1):
+    print(t)
+    sleep(1)
+
+# open file for write
+print('setting up export...')
+filename = str(vessel.name) + "_" + str(missionelapsedtime()) + "_Telemetry.csv"
+filename = str(outFile) + str(filename)
+
+try:
+    print('writing file header...')
+    with open(filename, mode='a+') as exportFile:
+        exportFile.write('MET;')
+        exportFile.write('ACTIVE;')
+        exportFile.write('THRUST;')
+        exportFile.write('AVAILABLE_THRUST;')
+        exportFile.write('MAX_THRUST;')
+        exportFile.write('MAX_VACUUM_THRUST;')
+        exportFile.write('SPECIFIC_IMPULSE;')
+        exportFile.write('VACUUM_SPECIFIC_IMPULSE;')
+        exportFile.write('PROPELLANT_NAMES;')
+        exportFile.write('PROPELLANT_RATIOS;')
+        exportFile.write('HAS_FUEL;')
+        exportFile.write('THROTTLE TEMP;')
+        exportFile.write("\n")
+
+    control.activate_next_stage()
+    engine_throttle = 1
+# write content
+    print('sending data...')
+    while True:
+        if stop_button_clicked():
+            print('STOP signal recieved.')
+            print('Telementry stream interupted by user. (stop_button_clicked)')
+            break
+        engine_propellant_name_list = ''
+        for prop in engine_propellant_names:
+            engine_propellant_name_list += prop
+        line = ("{met};"
+                "{active};"
+                "{thrust};"
+                "{available_thrust};"
+                "{max_thrust};"
+                "{max_vacuum_thrust};"
+                "{specific_impulse};"
+                "{vacuum_specific_impulse};"
+                "{propellant_names};"
+                "{propellant_ratios};"
+                "{has_fuel};"
+                "{throttle};"
+                "\n").format(met=str(timedelta(seconds=int(missionelapsedtime()))),
+                             active=engine_is_active(),
+                             thrust=engine_thrust(),
+                             available_thrust=engine_available_thrust(),
+                             max_thrust=engine_max_thrust(),
+                             max_vacuum_thrust=engine_max_vacuum_thrust(),
+                             specific_impulse=engine_specific_impulse(),
+                             vacuum_specific_impulse=engine_vacuum_specific_impulse(),
+                             propellant_names=engine_propellant_names(),
+                             propellant_ratios=engine_propellant_ratios(),
+                             has_fuel=engine_has_fuel(),
+                             throttle=engine_throttle)
+        with open(filename, mode='a+') as exportFile:
+            exportFile.write(line)
+
+        sleep(interval)
+except KeyboardInterrupt:
+    print('Telementry stream interupted by user. (keyboardinterupt)')
+finally:
+    print('ending dataloop...')
+

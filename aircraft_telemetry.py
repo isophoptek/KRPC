@@ -72,7 +72,7 @@ filename = str(outFile) + str(filename)
 gui_message_path = panel.add_text(str(filename))
 gui_message_path.color = (0, 255, 0)
 gui_message_path.rect_transform.position = (0, -40)
-gui_message_path.size = 6
+gui_message_path.size = 10
 
 
 # add header
