@@ -79,7 +79,7 @@ try:
         exportFile.write('THROTTLE TEMP;')
         exportFile.write("\n")
 
-    engine_throttle = 0
+    control.throttle = 0
     print('throttle set to zero')
     print('countdown:')
     for t in range(10, 0, 1):
@@ -88,7 +88,7 @@ try:
     print('stage')
     control.activate_next_stage()
     print('throttle set to maximum')
-    engine_throttle = 1
+    control.throttle = 1
 # write content
     print('sending data...')
     while True:
@@ -131,7 +131,7 @@ except KeyboardInterrupt:
     print('Telementry stream interupted by user. (keyboardinterupt)')
 finally:
     print('ending dataloop...')
-    engine_throttle = 0
+    control.throttle = 0
     print('throttle set to zero')
     print('closing steams')
     missionelapsedtime.remove()
