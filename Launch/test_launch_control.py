@@ -1,0 +1,103 @@
+import krpc
+import argparse
+from time import sleep
+
+
+def get_current_thrust():
+    active_engines = filter(lambda e: e.active and e.has_fuel, vessel.parts.engines)
+    thrust = sum(engine.thrust for engine in active_engines)
+    return thrust
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-a", "--apoapsis", help="Target Apoapsis")
+parser.add_argument("-i", "--initialturn", help="Initial turn in degrees", type=int, default=3)
+parser.add_argument("-v", "--turnvelocity", help="Velocity to initiate turn at, in seconds", type=int, default=100)
+parser.add_argument("-g", "--gracetime", help="Gracetime after initial turn, in seconds", type=int, default=10)
+parser.add_argument("-h", "--heading", help="Gracetime after initial turn, in seconds", type=int, default=10)
+
+# get arguments
+
+args = parser.parse_args()
+
+target_apoapsis = args.apoapsis
+turn_initial = args.initialturn
+turn_velocity = args.turnvelocity
+turn_gracetime = args.gracetime
+target_heading = args.heading
+g = 9.81
+
+# open connection
+
+conn = krpc.connect(name='launch_control')
+print('getting active vessel...')
+vessel = conn.space_center.active_vessel
+print('setting up control uplink...')
+control = vessel.control
+orbit = vessel.orbit
+flight = vessel.flight
+ref_frame_vel = vessel.orbit.body.reference_frame
+ref_frame = vessel.surface_reference_frame
+ap = vessel.auto_pilot
+ap.reference_frame = vessel.orbit.body.reference_frame
+
+# setup streams
+
+missionelapsedtime = conn.add_stream(getattr, vessel, 'met')
+meanaltitude = conn.add_stream(getattr, flight(ref_frame), 'mean_altitude')
+mass = conn.add_stream(getattr, vessel, 'mass')
+speed = conn.add_stream(getattr, flight(ref_frame_vel), 'speed')
+pitch = conn.add_stream(getattr, flight(ref_frame), 'pitch')
+aoa = conn.add_stream(getattr, flight(ref_frame), 'angle_of_attack')
+apoapsis = conn.add_stream(getattr, orbit, 'apoapsis_altitude')
+time_to_ap = conn.add_stream(getattr, orbit, 'time_to_apoapsis')
+periapsis = conn.add_stream(getattr, orbit, 'periapsis_altitude')
+time_to_pe = conn.add_stream(getattr, orbit, 'time_to_periapsis')
+
+# create gui
+
+display = conn.ui
+screen_size = display.stock_canvas.rect_transform.size
+canvas = display.add_canvas()
+panel = canvas.add_panel()
+panel.rect_transform.size = (200, 100)
+panel.rect_transform.position = (110-(screen_size[0]/2), 0)
+gui_message = panel.add_text('Launch Control Running')
+gui_message.color = (0, 255, 0)
+gui_message.rect_transform.position = (0, -20)
+
+# launch
+# add countdown, readouts
+# spool up engines before release
+control.throttle = 1
+control.activate_next_stage()
+
+twr = 0
+while twr < 1.6:
+    twr = get_current_thrust() / (mass() * g)
+    pass
+
+# release rocket straight up
+ap.target_pitch_and_heading = 90, target_heading
+ap.engage()
+control.activate_next_stage()
+
+# wait for initial turn
+while speed() < turn_velocity:
+    pass
+
+# initiate gravity turn, set ap for prograde after gracetime
+ap.target_pitch_and_heading = 90 - turn_initial, target_heading
+sleep(turn_gracetime)
+ap.target_direction = (0, 1, 0)
+
+# wait for target apoapsis
+while apoapsis < target_apoapsis:
+    pass
+
+# set pitch to zero
+ap.target_pitch_and_heading = 0, target_heading
+
+while apoapsis < periapsis:
+    pass
+
+control.throttle = 0
