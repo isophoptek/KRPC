@@ -9,11 +9,11 @@ def get_current_thrust():
     return thrust
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-a", "--apoapsis", help="Target Apoapsis")
+parser.add_argument("-a", "--apoapsis", help="Target Apoapsis in meters", type=int, default=350000)
 parser.add_argument("-i", "--initialturn", help="Initial turn in degrees", type=int, default=3)
 parser.add_argument("-v", "--turnvelocity", help="Velocity to initiate turn at, in seconds", type=int, default=100)
-parser.add_argument("-g", "--gracetime", help="Gracetime after initial turn, in seconds", type=int, default=10)
-parser.add_argument("-h", "--heading", help="Gracetime after initial turn, in seconds", type=int, default=10)
+parser.add_argument("-g", "--gracetime", help="Gracetime after initial turn, in seconds", type=int, default=4)
+parser.add_argument("-hd", "--heading", help="Heading", type=int, default=90)
 
 # get arguments
 
@@ -66,38 +66,58 @@ gui_message.color = (0, 255, 0)
 gui_message.rect_transform.position = (0, -20)
 
 # launch
-# add countdown, readouts
+print('Launch in:')
+for t in range(10,0):
+    print(t)
+print('Launch!')
 # spool up engines before release
 control.throttle = 1
+print('Throttle set to maximum')
 control.activate_next_stage()
+print('Stage!')
 
 twr = 0
 while twr < 1.6:
     twr = get_current_thrust() / (mass() * g)
     pass
-
+print('TWR reachhed: ' + str(twr))
 # release rocket straight up
 ap.target_pitch_and_heading = 90, target_heading
 ap.engage()
+print('autopilot parameters:')
+print(ap.target_pitch_and_heading)
 control.activate_next_stage()
-
+print('Release!')
 # wait for initial turn
 while speed() < turn_velocity:
     pass
-
+print('initial turn')
+print('speed: ' + str(speed()))
+print('turn_velocity: ' + str(turn_velocity))
 # initiate gravity turn, set ap for prograde after gracetime
 ap.target_pitch_and_heading = 90 - turn_initial, target_heading
+print('autopilot parameters:')
+print(ap.target_pitch_and_heading)
 sleep(turn_gracetime)
+print('end of grace time')
 ap.target_direction = (0, 1, 0)
+print('autopilot set to prograde')
 
 # wait for target apoapsis
 while apoapsis < target_apoapsis:
     pass
+print('ap reached, setting autopilot to zero pitch')
 
 # set pitch to zero
 ap.target_pitch_and_heading = 0, target_heading
+print('autopilot parameters:')
+print(ap.target_pitch_and_heading)
 
 while apoapsis < periapsis:
     pass
-
+print('apoapsis less then periapsis')
 control.throttle = 0
+print('Throttle set to zero')
+print('end of program.')
+
+

@@ -76,19 +76,20 @@ try:
         exportFile.write('PROPELLANT_NAMES;')
         exportFile.write('PROPELLANT_RATIOS;')
         exportFile.write('HAS_FUEL;')
-        exportFile.write('THROTTLE TEMP;')
+        exportFile.write('THROTTLE;')
         exportFile.write("\n")
 
-    control.throttle = 0
-    print('throttle set to zero')
+    # control.throttle = 0
+    # print('throttle set to zero')
     print('countdown:')
     for t in range(10, 0, 1):
         print(t)
         sleep(1)
-    print('stage')
-    control.activate_next_stage()
     print('throttle set to maximum')
     control.throttle = 1
+    print('stage')
+    control.activate_next_stage()
+
 # write content
     print('sending data...')
     while True:
@@ -97,8 +98,10 @@ try:
             print('Telementry stream interupted by user. (stop_button_clicked)')
             break
         engine_propellant_name_list = ''
-        for prop in engine_propellant_names:
-            engine_propellant_name_list += prop
+        ###
+        ### for prop in engine_propellant_names:
+        ### engine_propellant_name_list += prop
+        ###
         line = ("{met};"
                 "{active};"
                 "{thrust};"
@@ -133,7 +136,7 @@ finally:
     print('ending dataloop...')
     control.throttle = 0
     print('throttle set to zero')
-    print('closing steams')
+    print('closing streams...')
     missionelapsedtime.remove()
     engine_is_active.remove()
     engine_thrust.remove()
@@ -146,6 +149,7 @@ finally:
     engine_propellant_ratios.remove()
     engine_has_fuel.remove()
     engine_throttle_stream.remove()
+    print('closing connection...')
     conn.close()
 
 print('streams and connection closed.')
