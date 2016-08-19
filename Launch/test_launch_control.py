@@ -91,7 +91,7 @@ print('Ignition!')
 print('---------')
 
 twr = 0
-while twr < 1.6:
+while twr < 1.25:
     twr = get_current_thrust() / (mass() * g)
     pass
 print('TWR reachhed: ' + str(twr))
@@ -113,14 +113,16 @@ print('turn_velocity: ' + str(turn_velocity))
 # initiate gravity turn, set ap for prograde after gracetime
 ap.target_pitch_and_heading = 90 - turn_initial, target_heading
 ap.wait()
-ap.sas_mode = 'stabiltity_assist'
+# ap.sas_mode.stabiltity_assist()
+ap.disengage()
 ap.sas = True
+sleep(turn_gracetime)
 print('autopilot parameters (p,h):')
 print(ap.target_pitch_and_heading)
-sleep(turn_gracetime)
 print('end of grace time')
 ap.target_direction = (0, 1, 0)
 print('autopilot set to prograde')
+ap.engage()
 ap.wait()
 print('target vector reached')
 
