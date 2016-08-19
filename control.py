@@ -16,7 +16,6 @@ def uplink(uplink_name):
     except krpc.error.NetworkError:
         print('Connection to server could not be established.')
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
-        exit(1)
 
 
 def prog():
