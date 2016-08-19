@@ -9,10 +9,10 @@ def sectionheader(sectiontitle):
 
 def uplink(uplink_name):
     import krpc
-    global mc_uplink
     print('connecting to server as ' + str(uplink_name))
     try:
         mc_uplink = krpc.connect(name=str(uplink_name))
+        return mc_uplink
     except krpc.error.NetworkError:
         print('Connection to server could not be established.')
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
@@ -54,7 +54,6 @@ def retrog():
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
         exit(1)
 
-#    conn_control = krpc.connect(name='Control:Retrograde')
     vessel = conn_control.space_center.active_vessel
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
@@ -79,7 +78,6 @@ def norm():
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
         exit(1)
 
-#    conn_control = krpc.connect(name='Control:Normal')
     vessel = conn_control.space_center.active_vessel
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
@@ -104,7 +102,6 @@ def antinorm():
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
         exit(1)
 
-#    conn_control = krpc.connect(name='Control:AntiNormal')
     vessel = conn_control.space_center.active_vessel
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
@@ -129,7 +126,6 @@ def radial():
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
         exit(1)
 
-#    conn_control = krpc.connect(name='Control:Radial')
     vessel = conn_control.space_center.active_vessel
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
@@ -154,7 +150,6 @@ def antiradial():
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
         exit(1)
 
-#    conn_control = krpc.connect(name='Control:AntiRadial')
     vessel = conn_control.space_center.active_vessel
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
@@ -179,7 +174,6 @@ def turnvector(r, g, n):
         print('Check if server is running and accepts connections, accept connection manually if necessary.')
         exit(1)
 
-#    conn_control = krpc.connect(name='Control:TurnVector')
     vessel = conn_control.space_center.active_vessel
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
