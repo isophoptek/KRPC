@@ -28,7 +28,17 @@ g = 9.81
 
 # open connection
 
-conn = krpc.connect(name='launch_control')
+try:
+    print('Connecting to server...')
+    conn = krpc.connect(name='launch_control')
+
+except krpc.error.NetworkError as e:
+    print(e)
+    print('------------------------------------------------------------')
+    print('Connection to server could not be established.')
+    print('Check if server is running and accepts connections, accept connection manually if necessary.')
+    exit(1)
+
 print('getting active vessel...')
 vessel = conn.space_center.active_vessel
 print('setting up control uplink...')
