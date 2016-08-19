@@ -39,6 +39,7 @@ ref_frame_vel = vessel.orbit.body.reference_frame
 ref_frame = vessel.surface_reference_frame
 ap = vessel.auto_pilot
 ap.reference_frame = vessel.orbit.body.reference_frame
+ap.speedmode = 'surface'
 
 # setup streams
 
@@ -96,6 +97,8 @@ print('speed: ' + str(speed()))
 print('turn_velocity: ' + str(turn_velocity))
 # initiate gravity turn, set ap for prograde after gracetime
 ap.target_pitch_and_heading = 90 - turn_initial, target_heading
+ap.sas_mode = 'stabiltity_assist'
+ap.sas = True
 print('autopilot parameters:')
 print(ap.target_pitch_and_heading)
 sleep(turn_gracetime)
