@@ -26,6 +26,9 @@ print('getting active vessel...')
 vessel = conn.space_center.active_vessel
 print('setting up control uplink...')
 control = vessel.control
+flight = vessel.flight
+ref_frame = vessel.surface_reference_frame
+ref_frame_vel = vessel.orbit.body.reference_frame
 
 display = conn.ui
 screen_size = display.stock_canvas.rect_transform.size
@@ -56,6 +59,8 @@ engine_propellant_names = conn.add_stream(getattr, engine, 'propellant_names')
 engine_propellant_ratios = conn.add_stream(getattr, engine, 'propellant_ratios')
 engine_has_fuel = conn.add_stream(getattr, engine, 'has_fuel')
 engine_throttle_stream = conn.add_stream(getattr, engine, 'throttle')
+meanaltitude = conn.add_stream(getattr, flight(ref_frame), 'mean_altitude')
+speed = conn.add_stream(getattr, flight(ref_frame_vel), 'speed')
 
 # open file for write
 print('setting up export...')
@@ -77,6 +82,8 @@ try:
         exportFile.write('PROPELLANT_RATIOS;')
         exportFile.write('HAS_FUEL;')
         exportFile.write('THROTTLE;')
+        exportFile.write('ASL;')
+        exportFile.write('SPEED;')
         exportFile.write("\n")
 
     # control.throttle = 0
@@ -97,11 +104,6 @@ try:
             print('STOP signal recieved.')
             print('Telementry stream interupted by user. (stop_button_clicked)')
             break
-        engine_propellant_name_list = ''
-        ###
-        ### for prop in engine_propellant_names:
-        ### engine_propellant_name_list += prop
-        ###
         line = ("{met};"
                 "{active};"
                 "{thrust};"
@@ -114,6 +116,8 @@ try:
                 "{propellant_ratios};"
                 "{has_fuel};"
                 "{throttle};"
+                "{asl};"
+                "{speed};"
                 "\n").format(met=str(timedelta(seconds=int(missionelapsedtime()))),
                              active=engine_is_active(),
                              thrust=engine_thrust(),
@@ -125,7 +129,9 @@ try:
                              propellant_names=engine_propellant_names(),
                              propellant_ratios=engine_propellant_ratios(),
                              has_fuel=engine_has_fuel(),
-                             throttle=engine_throttle_stream())
+                             throttle=engine_throttle_stream(),
+                             asl=meanaltitude(),
+                             speed=speed())
         with open(filename, mode='a+') as exportFile:
             exportFile.write(line)
 
@@ -149,6 +155,8 @@ finally:
     engine_propellant_ratios.remove()
     engine_has_fuel.remove()
     engine_throttle_stream.remove()
+    meanaltitude.remove()
+    speed.remove()
     print('closing connection...')
     conn.close()
 
