@@ -98,7 +98,7 @@ print('TWR reachhed: ' + str(twr))
 # release rocket straight up
 ap.target_pitch_and_heading = 90, target_heading
 ap.engage()
-print('autopilot parameters:')
+print('autopilot parameters (p,h):')
 print(ap.target_pitch_and_heading)
 control.activate_next_stage()
 print('--------')
@@ -115,7 +115,7 @@ ap.target_pitch_and_heading = 90 - turn_initial, target_heading
 ap.wait()
 ap.sas_mode = 'stabiltity_assist'
 ap.sas = True
-print('autopilot parameters:')
+print('autopilot parameters (p,h):')
 print(ap.target_pitch_and_heading)
 sleep(turn_gracetime)
 print('end of grace time')
