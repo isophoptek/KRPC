@@ -41,6 +41,7 @@ except krpc.error.NetworkError as e:
 
 print('getting active vessel...')
 vessel = conn.space_center.active_vessel
+print('connected to ' + str(vessel.name) + '(' + str(vessel.type) + ')')
 print('setting up control uplink...')
 control = vessel.control
 orbit = vessel.orbit
@@ -85,7 +86,9 @@ print('Launch!')
 control.throttle = 1
 print('Throttle set to maximum')
 control.activate_next_stage()
-print('Stage!')
+print('---------')
+print('Ignition!')
+print('---------')
 
 twr = 0
 while twr < 1.6:
@@ -98,7 +101,9 @@ ap.engage()
 print('autopilot parameters:')
 print(ap.target_pitch_and_heading)
 control.activate_next_stage()
+print('--------')
 print('Release!')
+print('--------')
 # wait for initial turn
 while speed() < turn_velocity:
     pass
@@ -107,6 +112,7 @@ print('speed: ' + str(speed()))
 print('turn_velocity: ' + str(turn_velocity))
 # initiate gravity turn, set ap for prograde after gracetime
 ap.target_pitch_and_heading = 90 - turn_initial, target_heading
+ap.wait()
 ap.sas_mode = 'stabiltity_assist'
 ap.sas = True
 print('autopilot parameters:')
@@ -115,6 +121,8 @@ sleep(turn_gracetime)
 print('end of grace time')
 ap.target_direction = (0, 1, 0)
 print('autopilot set to prograde')
+ap.wait()
+print('target vector reached')
 
 # wait for target apoapsis
 while apoapsis < target_apoapsis:
