@@ -4,7 +4,7 @@ import argparse
 import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-t', '--target', help="Target Altitude in maters", type=int, default=15)
+parser.add_argument('-t', '--target', help="Target Altitude in meters", type=int, default=15)
 args = parser.parse_args()
 
 try:
