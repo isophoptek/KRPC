@@ -1,5 +1,14 @@
 # Hodur Vessel Procedures Library
 
+def uplink(uplink_name):
+        import krpc
+        print('connecting to server as ' + str(uplink_name))
+        try:
+            conn = krpc.connect(name=str(uplink_name))
+            return conn
+        except krpc.error.NetworkError:
+            print('Connection to server could not be established.')
+            print('Check if server is running and accepts connections, accept connection manually if necessary.')
 
 def deorbit():
 
@@ -7,19 +16,19 @@ def deorbit():
     from time import sleep
 
 # Connection
-
-    try:
-        print('Connecting to server as: Emergency Deorbit')
-        conn = krpc.connect(name='Emergency Deorbit')
-    except krpc.error.NetworkError:
-        print('Connection to server could not be established.')
-        print('Check if server is running and accepts connections, accept connection manually if necessary.')
-        exit(1)
+    conn = uplink('Emergency Deorbit')
+#    try:
+#        print('Connecting to server as: Emergency Deorbit')
+#        conn = krpc.connect(name='Emergency Deorbit')
+#    except krpc.error.NetworkError:
+#        print('Connection to server could not be established.')
+#        print('Check if server is running and accepts connections, accept connection manually if necessary.')
+#        exit(1)
 
     vessel = conn.space_center.active_vessel
     control = vessel.control
-    ref_frame = vessel.surface_reference_frame
-    flight = vessel.flight
+ #   ref_frame = vessel.surface_reference_frame
+ #   flight = vessel.flight
     orbit = vessel.orbit
     ap = vessel.auto_pilot
     ap.reference_frame = vessel.orbital_reference_frame
@@ -91,3 +100,5 @@ def deorbit():
     # decouple capsule, wait, separation burn (retrograde)
 
 
+def startup():
+    print ('startup sequence')
