@@ -101,11 +101,11 @@ def deorbit():
 
 
 def startup():
-    conn = uplink('Emergency Deorbit')
+    conn = uplink('Startup Sequence')
     vessel = conn.space_center.active_vessel
     control = vessel.control
 
-    print ('startup sequence')
+    print ('Startup sequence...')
     control.sas_mode = 'stability_assist'
     control.sas = True
     print('SAS Set to: ' + str(control.sas_mode))
@@ -114,12 +114,18 @@ def startup():
     print('Thrust set to : ' + str(control.throttle))
     part_list = vessel.parts.with_tag('Capsule')
     # check if supported, disable rcs, mtu
+    print('Main Engine')
     part_list = vessel.parts.with_tag('Main_Engine')
     for item in part_list:
         item.active = False
+        print('Engine Active : ' + str(item.active))
+    print('Backup Engine')
     part_list = vessel.parts.with_tag('Backup_Engine')
     for item in part_list:
         item.active = False
+        print('Engine Active : ' + str(item.active))
+    print('Emergency Engine')
     part_list = vessel.parts.with_tag('Emergency_Engine')
     for item in part_list:
         item.active = False
+        print('Engine Active : ' + str(item.active))
