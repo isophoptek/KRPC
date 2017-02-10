@@ -113,4 +113,13 @@ def startup():
     control.throttle = 0
     print('Thrust set to : ' + str(control.throttle))
     part_list = vessel.parts.with_tag('Capsule')
-    print(part_list)
+    # check if supported, disable rcs, mtu
+    part_list = vessel.parts.with_tag('Main_Engine')
+    for item in part_list:
+        item.active = False
+    part_list = vessel.parts.with_tag('Backup_Engine')
+    for item in part_list:
+        item.active = False
+    part_list = vessel.parts.with_tag('Emergency_Engine')
+    for item in part_list:
+        item.active = False
