@@ -101,4 +101,16 @@ def deorbit():
 
 
 def startup():
+    conn = uplink('Emergency Deorbit')
+    vessel = conn.space_center.active_vessel
+    control = vessel.control
+
     print ('startup sequence')
+    control.sas_mode = 'stability_assist'
+    control.sas = True
+    print('SAS Set to: ' + str(control.sas_mode))
+    print('SAS Active: ' + str(control.sas))
+    control.throttle = 0
+    print('Thrust set to : ' + str(control.throttle))
+    part_list = vessel.parts.with_tag('Capsule')
+    print(part_list)
